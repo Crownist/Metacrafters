@@ -16,32 +16,27 @@ pragma solidity 0.8.18;
 */
 
 contract MyToken {
-    // Public variables
-    string public tokenName;
-    string public tokenAbbrv;
-    uint public totalSupply;
 
-    // Mapping of addresses to balances
+    // public variables here
+    string public tokenName = "Tamaraws";
+    string public tokenAbbrv = "TAMS";
+    uint public totalSupply = 0;
+
+    // mapping variable here
     mapping(address => uint) public balances;
 
-    // Constructor to initialize the token details
-    constructor(string memory _name, string memory _abbrv, uint _initialSupply) {
-        tokenName = _name;
-        tokenAbbrv = _abbrv;
-        totalSupply = _initialSupply;
-        balances[msg.sender] = _initialSupply;
+    // mint function
+    function mint(address _address, uint _value) public{
+      totalSupply += _value;
+      balances[_address] += _value;
     }
-
-    // Mint function
-    function mint(address _address, uint _value) public {
-        totalSupply += _value;
-        balances[_address] += _value;
-    }
-
-    // Burn function
-    function burn(address _address, uint _value) public {
-        require(balances[_address] >= _value, "Insufficient balance to burn");
-        totalSupply -= _value;
-        balances[_address] -= _value;
+    // burn function
+    function burn(address _address, uint _value) public{
+      if (balances[_address] >= _value){
+      totalSupply -= _value;
+      balances[_address] -= _value;
+      }
+      
     }
 }
+
