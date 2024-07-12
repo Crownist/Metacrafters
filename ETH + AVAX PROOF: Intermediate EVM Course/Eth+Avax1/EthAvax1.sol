@@ -1,33 +1,38 @@
-// SPDX-License-Identifier: MIT.
-pragma solidity 0.8.18;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 contract EthAvax1 {
+    uint256 public number;
     address public owner;
+
+    event NumberUpdated(uint256 oldValue, uint256 newValue);
+    event NumberReset(uint256 oldValue);
 
     constructor() {
         owner = msg.sender;
     }
 
-    mapping(address => uint256) public balances;
-
-    function deposit(uint256 amount) public {
-        require(amount > 0, "Please, deposit an amount that is greater than zero!");
-        balances[msg.sender] += amount;
+ 
+    function setNumber(uint256 _number) public {
+        require(_number > 0, "Number must be greater than zero.");
+        number = _number;
     }
 
-    function transfer(address recipient, uint256 amount) public {
-        require(balances[msg.sender] >= amount, "Your balance is insufficient, please try again.");
 
-        assert(balances[recipient] + amount >= balances[recipient]);
-
-        balances[msg.sender] -= amount;
-        balances[recipient] += amount;
+    function doubleNumber() public {
+        uint256 oldValue = number;
+        number *= 2;
+        assert(number > 0);
+        emit NumberUpdated(oldValue, number);
     }
 
-    function withdraw(uint256 amount) public {
-        if (balances[msg.sender] < amount) {
-            revert("Insufficient balance for withdrawal, please try again.");
+    function resetNumber() public {
+        if (msg.sender != owner) {
+            revert("Only the owner can reset the number.");
         }
-        balances[msg.sender] -= amount;
+        uint256 oldValue = number;
+        number = 0;
+        emit NumberReset(oldValue);
     }
 }
+
