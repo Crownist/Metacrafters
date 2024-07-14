@@ -2,37 +2,47 @@
 pragma solidity ^0.8.18;
 
 contract EthAvax1 {
-    uint256 public number;
-    address public owner;
-
-    event NumberUpdated(uint256 oldValue, uint256 newValue);
-    event NumberReset(uint256 oldValue);
+    address private creator;
+    uint256 public currentOffer;
+    address public topCandidate;
+    bool public biddingProcess;
 
     constructor() {
-        owner = msg.sender;
+        creator = msg.sender;
+        currentOffer = 0;
+        biddingProcess = true;
     }
 
- 
-    function setNumber(uint256 _number) public {
-        require(_number > 0, "Number must be greater than zero.");
-        number = _number;
+    function submitOffer(uint256 amount) public {
+        require(biddingProcess, "Bidding process has already ended");
+        require(amount > currentOffer, "Offer must be higher than current top offer");
+
+        currentOffer = amount;
+        topCandidate = msg.sender;
     }
 
-
-    function doubleNumber() public {
-        uint256 oldValue = number;
-        number *= 2;
-        assert(number > 0);
-        emit NumberUpdated(oldValue, number);
+    function finalizeBidding() public {
+        require(biddingProcess, "Bidding process has already ended");
+        assert(currentOffer > 0);
+        biddingProcess = false;
     }
 
-    function resetNumber() public {
-        if (msg.sender != owner) {
-            revert("Only the owner can reset the number.");
+    function retrieveWinner() public view returns (address) {
+        require(biddingProcess == false, "Bidding process is still active");
+        return topCandidate;
+    }
+
+    function cancelBidding() public {
+        if (msg.sender != creator) {
+            revert("Only the creator can cancel the bidding");
         }
-        uint256 oldValue = number;
-        number = 0;
-        emit NumberReset(oldValue);
+        if (!biddingProcess) {
+            revert("Bidding process has already ended");
+        }
+        biddingProcess = false;
+        currentOffer = 0;
+        topCandidate = address(0);
     }
 }
+
 
