@@ -1,10 +1,10 @@
 # Project Title
 
-Smart Contract Project
+Create and Mint Token
 
 ## Description
 
-A smart contract that implements the require(), assert() and revert() statements.
+Create a Token that can be minted, transfered to another wallet and burn.
 
 ## Getting Started
 
